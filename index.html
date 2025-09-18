@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text to Video</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-color: #0a0a18;
+      --card-bg: #16162c;
+      --primary-accent: #7e22ce;
+      --secondary-accent: #3b82f6;
+      --text-color: #ffffff;
+      --text-secondary: #d1d5db;
+      --border-color: #3f3f6e;
+      --glow-color: #7e22ce;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      margin: 0;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      margin-bottom: 15px;
+      background: linear-gradient(90deg, var(--primary-accent), var(--secondary-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 18px var(--glow-color);
+      font-weight: 700;
+      animation: pulse 2s infinite alternate;
+    }
+    
+    @keyframes pulse {
+      0% { text-shadow: 0 0 10px var(--glow-color), 0 0 20px var(--glow-color) transparent; }
+      100% { text-shadow: 0 0 20px var(--glow-color), 0 0 35px var(--glow-color) transparent; }
+    }
+    
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 1.2rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .container {
+      background: var(--card-bg);
+      padding: 30px;
+      border-radius: 28px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+      width: 100%;
+      max-width: 700px;
+      text-align: center;
+      border: 1px solid var(--border-color);
+      transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 30px;
+    }
+    
+    .container:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.7);
+    }
+    
+    .input-group {
+      margin-bottom: 25px;
+    }
+    
+    textarea {
+      width: 100%;
+      padding: 16px;
+      border-radius: 14px;
+      border: 2px solid var(--primary-accent);
+      outline: none;
+      font-size: 1.05rem;
+      background: #2a2a4d;
+      color: var(--text-color);
+      transition: 0.3s;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+      resize: vertical;
+      min-height: 120px;
+    }
+    
+    textarea::placeholder {
+      color: #9a9abf;
+    }
+    
+    textarea:focus {
+      border-color: var(--secondary-accent);
+      box-shadow: 0 0 18px rgba(59, 130, 246, 0.6);
+    }
+    
+    .generate-btn {
+      background: linear-gradient(90deg, var(--secondary-accent), var(--primary-accent));
+      border: none;
+      padding: 16px 32px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1.15rem;
+      color: #ffffff;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 0 auto;
+      transition: transform 0.2s, box-shadow 0.3s;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    }
+    
+    .generate-btn:hover {
+      transform: scale(1.06);
+      box-shadow: 0 0 22px rgba(59, 130, 246, 0.5);
+    }
+    
+    .result {
+      margin-top: 35px;
+      min-height: 200px;
+    }
+    
+    .result p {
+      margin-bottom: 18px;
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+    }
+    
+    .loader {
+      border: 6px solid #333;
+      border-top: 6px solid var(--primary-accent);
+      border-radius: 50%;
+      width: 55px;
+      height: 55px;
+      animation: spin 1s linear infinite;
+      margin: 25px auto;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .download-btn {
+      display: inline-block;
+      margin-top: 25px;
+      padding: 14px 28px;
+      border-radius: 35px;
+      background: linear-gradient(90deg, var(--secondary-accent), var(--primary-accent));
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      transition: 0.3s ease-in-out;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+    }
+    
+    .download-btn:hover {
+      box-shadow: 0 0 22px rgba(59, 130, 246, 0.6);
+      transform: scale(1.07);
+    }
+    
+    .error {
+      color: #ff6b6b;
+      margin-top: 20px;
+      font-weight: 500;
+    }
+    
+    .info-section {
+      background: var(--card-bg);
+      padding: 30px;
+      border-radius: 28px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+      width: 100%;
+      max-width: 700px;
+      text-align: left;
+      border: 1px solid var(--border-color);
+      margin-bottom: 30px;
+    }
+    
+    .info-section h2 {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      background: linear-gradient(90deg, var(--primary-accent), var(--secondary-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 700;
+      text-align: center;
+    }
+    
+    .info-section h3 {
+      font-size: 1.4rem;
+      margin: 25px 0 15px 0;
+      color: var(--secondary-accent);
+    }
+    
+    .info-section ol, .info-section ul {
+      padding-left: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .info-section li {
+      margin-bottom: 15px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    
+    .info-section strong {
+      color: var(--text-color);
+    }
+    
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    
+    .benefit-card {
+      background: rgba(42, 42, 77, 0.5);
+      padding: 20px;
+      border-radius: 16px;
+      border-left: 4px solid var(--primary-accent);
+    }
+    
+    .benefit-card i {
+      font-size: 2rem;
+      color: var(--secondary-accent);
+      margin-bottom: 15px;
+    }
+    
+    .benefit-card h4 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: var(--text-color);
+    }
+    
+    .benefit-card p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+    
+    footer {
+      margin-top: 30px;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      text-align: center;
+      width: 100%;
+      padding: 20px;
+      border-top: 1px solid var(--border-color);
+    }
+    
+    footer p {
+      margin-bottom: 10px;
+    }
+    
+    /* Responsiveness */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.2rem;
+      }
+      
+      .subtitle {
+        font-size: 1rem;
+      }
+      
+      .container, .info-section {
+        padding: 20px;
+      }
+      
+      .generate-btn {
+        padding: 14px 26px;
+        font-size: 1rem;
+      }
+      
+      .benefits-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      .container, .info-section {
+        padding: 15px;
+      }
+      
+      textarea {
+        padding: 12px;
+      }
+      
+      .generate-btn {
+        width: 100%;
+        padding: 12px 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Text to Video</h1>
+    <p class="subtitle">Ubah teks Anda menjadi video AI</p>
+  </header>
+
+  <div class="container">
+    <div class="input-group">
+      <textarea id="textInput" placeholder="Masukkan teks yang ingin diubah menjadi video..."></textarea>
+    </div>
+    
+    <button class="generate-btn" onclick="generateVideo()">
+      <i class="fas fa-film"></i>
+      Generate Video
+    </button>
+    
+    <div class="result" id="result"></div>
+  </div>
+
+  <div class="info-section">
+    <h2>Manfaat Text to Video</h2>
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <i class="fas fa-bolt"></i>
+        <h4>Konten Cepat dan Mudah</h4>
+        <p>Buat video profesional dalam hitungan detik tanpa perlu keahlian editing</p>
+      </div>
+      <div class="benefit-card">
+        <i class="fas fa-dollar-sign"></i>
+        <h4>Hemat Biaya</h4>
+        <p>Hemat biaya produksi video dengan teknologi AI yang canggih</p>
+      </div>
+      <div class="benefit-card">
+        <i class="fas fa-users"></i>
+        <h4>Engagement Meningkat</h4>
+        <p>Video meningkatkan engagement hingga 5x lipat dibanding teks saja</p>
+      </div>
+      <div class="benefit-card">
+        <i class="fas fa-globe"></i>
+        <h4>Aksesibilitas</h4>
+        <p>Jangkau audiens yang lebih luas dengan format video yang universal</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <h2>Cara Menggunakan</h2>
+    <ol>
+      <li><strong>Masukkan teks</strong> yang ingin Anda ubah menjadi video pada kolom teks</li>
+      <li><strong>Klik tombol "Generate Video"</strong> untuk memulai proses pembuatan video</li>
+      <li><strong>Tunggu beberapa saat</strong> hingga video selesai diproses</li>
+      <li><strong>Video akan otomatis terdownload</strong> ke perangkat Anda</li>
+      <li><strong>Buka file video</strong> yang telah didownload untuk melihat hasilnya</li>
+    </ol>
+    
+    <h3>Tips untuk Hasil Terbaik:</h3>
+    <ul>
+      <li>Gunakan teks yang jelas dan deskriptif untuk hasil video yang lebih baik</li>
+      <li>Batasi teks hingga 1-2 paragraf untuk hasil yang optimal</li>
+      <li>Pastikan koneksi internet stabil saat memproses video</li>
+      <li>Gunakan browser terbaru untuk pengalaman terbaik</li>
+    </ul>
+  </div>
+
+  <footer>
+    <p>Text to Video I Hanzzcodee</p>
+  </footer>
+
+  <script>
+    function generateVideo() {
+      const text = document.getElementById("textInput").value.trim();
+      const resultDiv = document.getElementById("result");
+      
+      if (!text) {
+        alert("Harap masukkan teks terlebih dahulu!");
+        return;
+      }
+
+      resultDiv.innerHTML = '<div class="loader"></div><p>Sedang membuat video... Jangan tutup halaman ini.</p>';
+      
+      // Buat URL untuk API
+      const apiUrl = `/api/generate?text=${encodeURIComponent(text)}`;
+      
+      // Buat iframe untuk memicu download
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = apiUrl;
+      document.body.appendChild(iframe);
+      
+      // Set timeout untuk memberikan feedback
+      setTimeout(() => {
+        resultDiv.innerHTML = `
+          <p>Video berhasil dibuat!</p>
+          <p>Video sedang didownload secara otomatis.</p>
+          <p>Jika download tidak dimulai, <a href="${apiUrl}" download="ai-video.mp4" class="download-btn">klik di sini</a></p>
+        `;
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
